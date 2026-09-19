@@ -1,0 +1,398 @@
+{
+  "name": "Informe Diario de Contenido Audiovisual",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Eres un asistente de IA especializado en meteorología y curaduría de entretenimiento. Tu función principal es buscar y entregar el reporte actualizado del clima y tiempo en la zona geográfica actual del usuario {{ $json['property_temas_de_interés'] }}(ubicado en este caso en {{ $json.property_ciudad }}). Complementándolo de forma secundaria con exactamente 3 recomendaciones de series o animes obtenidas principalmente de Notion y Wikipedia o fuentes web confiables.\nEstas son tus reglas:\n1. Ante cualquier interacción de rutina o solicitud general, tu enfoque principal y lo primero que debes entregar es el estado del tiempo y clima actual en la ubicación del usuario (temperatura, condiciones del cielo y datos relevantes para el día).\n2. Inmediatamente después del reporte meteorológico, proporciona una lista de exactamente 3 recomendaciones de series o animes obtenidas de diferentes sitios web. Bajo ninguna circunstancia debes repetir ninguna serie o anime que ya le hayas recomendado al usuario en días anteriores. Mantén un registro mental o histórico de las sugerencias pasadas para garantizar variedad absoluta en cada entrega.\n3.Si no puedes determinar la ubicación exacta del usuario para el reporte climático, pídele amablemente que te indique su ciudad o zona. Si una recomendación no arroja información confiable en Wikipedia, sustitúyela por otra opción verificable. No inventes (alucines) datos del clima ni de las series.\nEl idioma tiene que serEspañol neutro obligatorio.\nY el estilo dinámico, directo, sin rodeos innecesarios; priorizando siempre la utilidad del reporte del tiempo seguido de las sugerencias audiovisuales. \nFecha de hoy:{{ $json.timestamp }}\nPor favor, genera el informe usando HTML con estilo CSS en línea para la estructura:\n\n1. Para la sección del Clima, colócala dentro de un cuadro verde estilizado:\n<div style=\"background-color: #f1f8e9; border-left: 4px solid #2e7d32; padding: 15px; border-radius: 6px; margin-bottom: 20px;\">\n   <!-- Contenido del clima aquí -->\n</div>\n\n2. Para la sección de Noticias del Día / Recomendaciones, colócala dentro de un cuadro de color (por ejemplo, azul o violeta):\n<div style=\"background-color: #e3f2fd; border-left: 4px solid #1565c0; padding: 15px; border-radius: 6px; margin-bottom: 20px;\">\n   <h3 style=\"color: #1565c0; margin-top: 0;\">NOTICIAS Y RECOMENDACIONES DEL DÍA</h3>\n   <!-- Contenido de noticias/series aquí -->\n</div>\n\"Genera la respuesta directamente en formato HTML (sin usar delimitadores markdown como ```html). Incluye una tarjeta verde para el clima y una tarjeta azul para las series/noticias.\"\n",
+        "options": {
+          "systemMessage": "=$json.timestamp }}",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f74fe00f-d9e4-4ec5-9b8e-180d3ce3ff8e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "unico_e_inigualable_ID"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        192
+      ],
+      "id": "f8f6b39d-545a-47a1-b6a2-1a4f22680abf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        176,
+        0
+      ],
+      "id": "00d1dde1-5fbf-4763-9c54-79faca5dcf72",
+      "name": "Tiempo"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 2048
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        192
+      ],
+      "id": "294cf612-096d-465c-add4-0c225919117b",
+      "name": "Datos e información",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "0c6G469puPAYlptd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "cityName": "Maldonado, UY"
+      },
+      "type": "n8n-nodes-base.openWeatherMapTool",
+      "typeVersion": 1,
+      "position": [
+        672,
+        176
+      ],
+      "id": "540bc3b1-459a-4b3f-8009-bfd28d0f5bb2",
+      "name": "Clima",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "L9Ckpb44JfUBBO8b",
+          "name": "OpenWeatherMap account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        736,
+        0
+      ],
+      "id": "71a32e75-e84c-421d-a690-44ecbc2bb227",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "location": "Maldonado, UY",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        544,
+        192
+      ],
+      "id": "20eceb43-bdc7-4e7b-8390-0037d71840d4",
+      "name": "Google search in SerpApi",
+      "credentials": {
+        "serpApi": {
+          "id": "NdxoHErfsFajSIjV",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "dataSourceId": {
+          "__rl": true,
+          "value": "3e07a2db-85ef-809a-b5de-000bf9a57cc5",
+          "mode": "list",
+          "cachedResultName": "3e07a2db-85ef-809a-b5de-000bf9a57cc5",
+          "cachedResultUrl": "https://app.notion.com/p/3e07a2db85ef8052a4accf5e826d0187"
+        },
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 3,
+      "position": [
+        320,
+        0
+      ],
+      "id": "1ce9d720-c8d1-4001-8ce0-b0e68cbebf71",
+      "name": "Base de datos Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "aUK7uBBWXfEVP8bR",
+          "name": "Notion account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.6-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.6-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Enbellece el HTML usando un estilo CSS inline para un email. Dale un formato de boletín moderno y muestra solo los eresultados sin elementos de encabezado.",
+              "role": "model"
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxOutputTokens": 1000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        0
+      ],
+      "id": "d633e040-0619-4d4f-aac9-a0cdc2eb1bda",
+      "name": "Mensajes de modelo AI",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "0c6G469puPAYlptd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "e29245a1-99f2-4ec9-8439-0b1443b94972",
+      "name": "Tiempo de espera",
+      "webhookId": "d2da243e-23d6-40c1-bed2-92f0b030e76c"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Base de datos Notion').item.json['property_correo_electrónico'] }}",
+        "subject": "=Buen día! Este es el informe diario del tiempo en su zona:\n{{ $('Tiempo').item.json['Readable date'] }}",
+        "message": "=<p style=\"font-family: sans-serif; font-size: 15px;\">Buen día! Este es el informe diario del tiempo en su zona:</p>\n<p style=\"font-family: sans-serif; font-size: 15px;\">El asistente de IA ha generado la siguiente propuesta para el informe de hoy:</p>\n\n{{ $('AI Agent').first().json.output }}\n\n<p style=\"font-family: sans-serif; font-size: 15px;\">Si los datos son correctos y deseas autorizar el envío definitivo al destinatario, haz clic abajo:</p>\n\n<p style=\"text-align: center; margin-top: 20px;\">\n  <a href=\"{{ $execution.resumeUrl }}\" style=\"background-color: #2e7d32; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-family: sans-serif; display: inline-block;\">\n    Aprobar y Enviar Briefing\n  </a>\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "59588979-d79a-49be-95c3-e24ab9c50cf3",
+      "name": "Enviar revisión",
+      "webhookId": "316ca948-8ede-4a13-9cd3-17abce8a2dd1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4EQfxczGSbzjwvto",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Base de datos Notion').item.json['property_correo_electrónico'] }}",
+        "subject": "=Buen día! Este es el informe diario del tiempo: {{ $('Tiempo').item.json['Readable date'] }}",
+        "message": "=<p style=\"font-family: sans-serif; font-size: 15px;\">Hola,</p>\n<p style=\"font-family: sans-serif; font-size: 15px;\">Aquí tienes el informe diario solicitado:</p>\n\n<!-- Tarjeta visual generada por la IA -->\n{{ $('Mensajes de modelo AI').item.json.content.parts[0].text }}\n\n<p style=\"font-family: sans-serif; font-size: 13px; color: #777; margin-top: 25px;\">\n  Este correo fue revisado y aprobado automáticamente.\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "db411482-d52b-426a-821d-bdeee5e4753e",
+      "name": "Confirmar revisión",
+      "webhookId": "5aa18808-f05b-478f-91b9-7f40f0526b2b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4EQfxczGSbzjwvto",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiempo": {
+      "main": [
+        [
+          {
+            "node": "Base de datos Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos e información": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clima": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Mensajes de modelo AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google search in SerpApi": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de datos Notion": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensajes de modelo AI": {
+      "main": [
+        [
+          {
+            "node": "Enviar revisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiempo de espera": {
+      "main": [
+        [
+          {
+            "node": "Confirmar revisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar revisión": {
+      "main": [
+        [
+          {
+            "node": "Tiempo de espera",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "eb0628f6-ddf6-4532-a78e-b05fb294a7c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "499313e456bcef4f4c3be7d386fb84aec42cca7b2a3985f5c3aa3fba7239d71b"
+  },
+  "nodeGroups": [],
+  "id": "295wU1OQO2NxgIQX",
+  "tags": []
+}
