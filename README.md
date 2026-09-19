@@ -2,6 +2,7 @@
 Tengo que recalcar que, antes de proceder con el proyecto: 
 - El asistente "Modelo AI" fue hecho en su totalidad con "Gemini" en lugar de "OpenAi".
 - Se usó "Notion" para su debida base de datos y "OpenWeather" para las búsquedas referentes al clima.
+# Link de la Base de Datos (Notion): https://jolly-lathe-35e.notion.site/3e07a2db85ef8052a4accf5e826d0187?v=3e07a2db85ef807c96d4000c119388fb
 
 El asistente automatizado en n8n cumple con las siguientes tareas en cada ejecución:
 
