@@ -1,4 +1,9 @@
 # Informe-Diario-de-Contenido-Audiovisual
+
+**IMPORTANTE**-En caso de no poder acceder a las pruebas visuales vía video en el archivo "Informante AI" abrir el siguiente enlace:
+-Pruebas de funcionalidad en vivo: 
+https://drive.google.com/drive/folders/1-meOghMG0cEhHkcPprnTh5ShHxvi6fNZ?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto
+
 Tengo que recalcar que, antes de proceder con el proyecto: 
 - El asistente "Modelo AI" fue hecho en su totalidad con "Gemini" en lugar de "OpenAi".
 - Se usó "Notion" para su debida base de datos y "OpenWeather" para las búsquedas referentes al clima.
@@ -15,3 +20,4 @@ Redacción con IA: El nodo AI Agent (Gemini) genera las sinopsis de series e int
 Control Humano (Human-in-the-Loop): Envía un primer correo a tu bandeja de Gmail con una tarjeta de color y un botón de aprobación. En ese momento, el flujo entra en pausa mediante el nodo Wait.
 
 Despacho definitivo: Una vez que haces clic en Aprobar y Enviar Briefing, la URL reactiva la secuencia y envía el boletín final estilizado al destinatario.
+
